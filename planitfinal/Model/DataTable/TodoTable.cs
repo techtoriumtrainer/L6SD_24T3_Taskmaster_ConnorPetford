@@ -1,0 +1,50 @@
+﻿//using SQLite;
+
+
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace planitfinal.Model.DataTable;
+
+[Table("Todo")]
+public class TodoTable
+{
+    [System.ComponentModel.DataAnnotations.Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id
+    {
+        set; get;
+    }
+
+    public string Name
+    {
+        set; get;
+    }
+
+    public string Description
+    {
+        set; get;
+    }
+
+    public bool IsComplete
+    {
+        set; get;
+    }
+
+    public int Color
+    {
+        set;
+        get;
+    }
+
+    public int SprintID
+    {
+        set; get; 
+    }
+
+    [ForeignKey(nameof(SprintID))]
+    public SprintTable Sprint
+    {
+        get;set;
+    }
+
+}
