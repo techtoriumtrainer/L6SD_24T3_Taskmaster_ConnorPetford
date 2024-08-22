@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    x:Class="Taskmaster.MVVM.Views.MainView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:Taskmaster.Converters"
+    Title="Task Master">
+
+    <ContentPage.Resources>
+        <converters:ColorConverter x:Key="ColorConverter"/>
+    </ContentPage.Resources>
+
+    <Grid Margin="15" RowDefinitions=".1*, .3*, .7*">
+        <Label Text="My Tasks" Margin="10" StyleClass="DarkBlue, Header" TextColor="White"/>
+        <Grid Grid.Row="1" RowDefinitions=".2*, .8*">
+            <Label StyleClass="LightBlue, SubHeader" Text="CATEGORIES" Margin="10" TextColor="White"/>
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Categories}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="5" Orientation="Horizontal"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="0.5">
+                            <RoundRectangle WidthRequest="200" HeightRequest="150"/>
+                            <VerticalStackLayout Padding="5">
+                                <Label StyleClass="LightBlue" Text="{Binding PendingTasks, StringFormat='{0} Pending Tasks'}" TextColor="White"/>
+                                <Label StyleClass="LightBlue" Text="{Binding Completed, StringFormat='{0} Completed Tasks'}" TextColor="White"/>
+                                <Label StyleClass="DarkBlue, CardTitle" Text="{Binding CategoryName}" TextColor="White"/>
+                                <Label StyleClass="LightBlue" Text="{Binding Percentage, StringFormat='{0:P}'}" TextColor="White"/>
+                                <ProgressBar Progress="{Binding Percentage}" ProgressColor="{Binding Color, Converter={StaticResource ColorConverter}}"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        <Grid Grid.Row="2" RowDefinitions=".2*, .8*">
+            <Label StyleClass="LightBlue, SubHeader" Text="PENDING TASKS" Margin="10" TextColor="White"/>
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Tasks}"
+                ItemsUpdatingScrollMode="KeepItemsInView">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#27274d">
+                            <Grid ColumnDefinitions="Auto, 180, Auto, Auto">
+                                <!-- Checkbox -->
+                                <CheckBox
+                                    x:Name="checkBox"
+                                    IsChecked="{Binding Completed}"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Start"
+                                    CheckedChanged="checkBox_CheckedChanged"
+                                    Color="{Binding TaskColor, Converter={StaticResource ColorConverter}}"/>
+
+                                <!-- Task Name Label -->
+                                <Label Grid.Column="1"
+                                   Text="{Binding TaskName}"
+                                   TextColor="{DynamicResource LightTextColor}"
+                                   VerticalOptions="CenterAndExpand"
+                                   HorizontalOptions="StartAndExpand">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Source={x:Reference checkBox}, Path=IsChecked}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                
+                                <!-- Edit Button -->
+                                <Button Grid.Column="2"
+                                    Text="Edit"
+                                    HorizontalOptions="End"
+                                    Clicked="EditTaskClicked"
+                                    CommandParameter="{Binding .}" />
+
+                                <!-- Delete Button -->
+                                <Button Grid.Column="3" 
+                                    Text="X" 
+                                    TextColor="DarkRed"
+                                    HorizontalOptions="End" 
+                                    Clicked="DeleteTaskClicked"
+                                    CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button 
+            Grid.Row="2" 
+            Clicked="Button_Clicked"
+            VerticalOptions="EndAndExpand"
+            TextColor="White"
+            FontSize="20"
+            BackgroundColor="#27274d"
+            Style="{StaticResource CircularButton}"
+            Text="+"/>
+        </Grid>
+    </Grid>
+</ContentPage>
